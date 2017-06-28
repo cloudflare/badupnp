@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strings"
 	"sync"
 	"time"
 )
@@ -65,9 +66,14 @@ type notifyRequest struct {
 func testClient(w http.ResponseWriter, rw *http.Request) {
 	SSDP_SEARCH := []byte(fmt.Sprintf(SSDP_SEARCH_P, ssdpST))
 
-	addr, err := net.ResolveUDPAddr(protocol, fmt.Sprintf("%s:1900", rw.Header.Get("CF-Connecting-IP")))
+	ipaddr := rw.Header.Get("CF-Connecting-IP")
+	if strings.Contains(ipaddr, ":") {
+		ipaddr = fmt.Sprintf("[%s]", ipaddr)
+	}
+
+	addr, err := net.ResolveUDPAddr(protocol, fmt.Sprintf("%s:1900", ipaddr))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[ ] Can't resolve %s\n", rw.Header.Get("CF-Connecting-IP"))
+		fmt.Fprintf(os.Stderr, "[ ] Can't resolve %s\n", ipaddr)
 		http.Error(w, "Unable to resolve IP", http.StatusInternalServerError)
 		return
 	}
