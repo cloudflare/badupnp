@@ -7,7 +7,10 @@ bad because UPnP returns many more packets than the requesting system
 sends it, combined with UDP as a transport, it makes it a protocol ripe
 for abuse for DDoS reflection.
 
-example systemd units:
+This tool was written for the Cloudflare blog post:
+https://blog.cloudflare.com/ssdp-100gbps/
+
+# Example systemd units:
 
 ```
 [Service]
@@ -24,7 +27,7 @@ RestartSec=10s
 WantedBy=multi-user.target
 ```
 
-Example lighttpd reverse proxy info:
+# Example lighttpd reverse proxy info:
 
 ```
 # ensure you have mod_proxy loaded
